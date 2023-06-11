@@ -43,11 +43,17 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 
 # API
 
-http://api.openweathermap.org/data/2.5/weather?q={city},{country}&APPID={ api key }
+weather API:<br>
+http://api.openweathermap.org/data/2.5/weather?q={city},{country}&APPID={api_key}<br>
+api_key => get from https://openweathermap.org<br>
+city => city name<br>
+country => country iso (optional)<br>
 
-api key => get from https://openweathermap.org
-city => city name
-country => country iso (optional)
+google API for images:<br>
+https://serpapi.com/search.json?engine=google_images&q={search_query}&apikey={api_key}<br>
+api_key => get from https://serpapi.com<br>
+search_query => query you want to search<br>
 
 # .env
-VITE_API_KEY = {api_key_value}
+VITE_API_KEY_IMAGE = serpapi api key
+VITE_API_KEY_WEATHER = openweathermap api key
