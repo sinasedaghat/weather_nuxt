@@ -1,6 +1,6 @@
 <template>
   <v-layout full-height>
-    <NavBar />
+    <AppBar />
     <v-main>
       <v-responsive max-width="1200" class="mx-auto">
         <slot />

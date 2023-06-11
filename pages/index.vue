@@ -1,16 +1,16 @@
 <script setup lang="ts">
   // const 
   // const {data, error} = useFetch('')
-  // const {data} = () => useWeatherService('tehran')
+  // const { data, error } = () => useWeatherService('tehran')
   const url = ref(import.meta.env.VITE_BASE_URL_WEATHER)
   const apiKey = ref(import.meta.env.VITE_API_KEY_WEATHER)
   const {data, error} = await useFetch(url, {
     query: {
-      q: 'karaj',
-      APPID: apiKey.value
+      q: 'Florida',
+      APPID: apiKey.value,
+      units: 'metric' 
     }
   })
-
 </script>
 
 <template>
