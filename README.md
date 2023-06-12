@@ -55,5 +55,6 @@ api_key => get from https://serpapi.com<br>
 search_query => query you want to search<br>
 
 # .env
-VITE_API_KEY_IMAGE = serpapi api key
-VITE_API_KEY_WEATHER = openweathermap api key
+VITE_API_KEY_WEATHER = openweathermap api key<br>
+VITE_BASE_URL_WEATHER = openweathermap base url<br>
+VITE_API_KEY_IMAGE = serpapi api key<br>

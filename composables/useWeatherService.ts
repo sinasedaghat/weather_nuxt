@@ -13,6 +13,9 @@ const useWeatherService = async (city: string) => {
     }
   })
 
+  console.log('data', data)
+  console.log('error', error)
+
   return {
     data,
     error

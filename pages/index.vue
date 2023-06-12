@@ -6,7 +6,7 @@
   const apiKey = ref(import.meta.env.VITE_API_KEY_WEATHER)
   const {data, error} = await useFetch(url, {
     query: {
-      q: 'Florida',
+      q: 'ardabil',
       APPID: apiKey.value,
       units: 'metric' 
     }
