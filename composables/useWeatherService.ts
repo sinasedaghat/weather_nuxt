@@ -13,13 +13,16 @@ const useWeatherService = async (city: string) => {
     }
   })
 
-  console.log('data', data)
-  console.log('error', error)
+  // const modeling = weatherModel.modeling(data)
+  console.log('data', data.value)
+  // console.log('modeling', modeling)
+  // console.log('error', error)
 
   return {
     data,
     error
   }
+ 
 
   // return useState('foo', () => 'bar')
 }

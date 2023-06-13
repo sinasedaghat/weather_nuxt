@@ -12,7 +12,7 @@ console.log(route.path)
     <!-- logo of appbar -->
     <!-- TODO: after add scss file change cursor -->
     <v-img
-      class="ms-4 pa-1 b-red"
+      class="ms-4 pa-1"
       src="/logo_white.png"
       max-height="38"
       max-width="38"

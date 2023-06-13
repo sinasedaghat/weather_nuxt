@@ -41,7 +41,7 @@ npm run preview
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 
-# API
+## API
 
 weather API:<br>
 http://api.openweathermap.org/data/2.5/weather?q={city},{country}&APPID={api_key}<br>
@@ -54,7 +54,7 @@ https://serpapi.com/search.json?engine=google_images&q={search_query}&apikey={ap
 api_key => get from https://serpapi.com<br>
 search_query => query you want to search<br>
 
-# .env
+## .env
 VITE_API_KEY_WEATHER = openweathermap api key<br>
 VITE_BASE_URL_WEATHER = openweathermap base url<br>
 VITE_API_KEY_IMAGE = serpapi api key<br>
