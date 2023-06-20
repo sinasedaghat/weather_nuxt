@@ -12,10 +12,12 @@
     "@invictus.codes/nuxt-vuetify": "^0.2.20",
     "@nuxt/devtools": "latest",
     "@types/node": "^18",
-    "nuxt": "^3.5.2"
+    "node-sass": "^9.0.0",
+    "nuxt": "^3.5.3",
+    "sass": "^1.63.3",
+    "sass-loader": "^13.3.2"
   },
   "dependencies": {
-    "pnpm": "^8.6.1",
-    "sass": "^1.63.3"
+    "pnpm": "^8.6.1"
   }
 }

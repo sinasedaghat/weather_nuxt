@@ -7,7 +7,7 @@ export default defineNuxtConfig({
   // css: [
   //   '@/assets/stylesheets/main.scss'
   // ],
-
+  ssr: false,
   modules: [
     '@invictus.codes/nuxt-vuetify'
   ],
