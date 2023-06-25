@@ -1,11 +1,9 @@
 <script setup lang="ts">
   // const 
   // const {data, error} = useFetch('')
-  // const { data, error } = () => useWeatherService('tehran')
+useWeatherService('tehran')
   // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
-  import countriesObj from '@/public/json/countriesObj.json'
-  const countries = ref(countriesObj)
-  console.log('countries', countries.value['ir'])
+
   const url = ref(import.meta.env.VITE_BASE_URL_WEATHER)
   const apiKey = ref(import.meta.env.VITE_API_KEY_WEATHER)
   const {data: weather, error} = await useFetch(url, {
