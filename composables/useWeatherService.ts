@@ -15,28 +15,29 @@ const useWeatherService = async (city: string) => {
     }
   })
   console.log('dataxxxxx', data.value)
-  // let weather: Weather = {
-  // // let weather = {
-  //   id: data.value.weather[0].id,
-  //   city_id: data.value.id,
-  //   name: data.value.name,
-  //   country: data.value.sys.country,
-  //   main: data.value,
-  //   description: '',
-  //   icon: '',
-  //   temp: {
-  //     temp: 0,
-  //     feels_like: 0,
-  //     temp_min: 0,
-  //     temp_max: 0
-  //   },
-  //   wind: {
-  //     speed: 0
-  //   }
-  // }
+  let weather: Weather = {
+  // let weather = {
+    id: data.value.weather[0].id,
+    city_id: data.value.id,
+    name: data.value.name,
+    country: data.value.sys.country,
+    main: data.value.weather[0].main,
+    description: data.value.weather[0].description,
+    icon: data.value.weather[0].icon,
+    temp: {
+      temp: data.value.main.temp,
+      feels_like: data.value.main.feels_like,
+      temp_min: data.value.main.temp_min,
+      temp_max: data.value.main.temp_max
+    },
+    wind: {
+      speed: data.value.wind.speed
+    }
+  }
 
+  const weatherRef = ref(weather)
 
-// console.log("weather", weather)
+console.log("weather", weather)
 
 
 
@@ -48,8 +49,9 @@ const useWeatherService = async (city: string) => {
 
 
   return {
-    data,
-    error
+    // data,
+    // error
+    weatherRef
   }
  
 
