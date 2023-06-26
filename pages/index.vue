@@ -5,16 +5,19 @@
   // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
   import { Weather } from '@/types/weatherTypes'
 
-  const city = ref('')
+  const city = ref('tehran')
+  const input = reactive({city: 'tehran'})
   // const weather: Ref<Weather>
-
+    let test: string = ''
   // const getData = () => {}
   const url = ref(import.meta.env.VITE_BASE_URL_WEATHER)
   const apiKey = ref(import.meta.env.VITE_API_KEY_WEATHER)
   const {data, error, refresh} = await useFetch(url, {
+    server: false,
     query: {
-      q: city.value || 'tehran',
-      APPID: apiKey.value,
+      // q: input.city,
+      q: city,
+      APPID: apiKey,
       units: 'metric' 
     }
   })
@@ -41,12 +44,15 @@
 
   onMounted(() => {
     console.log('myheader mounted');
+    city.value = 'karaj'
   });
 
   
-  const callAPI = () => {
+  const  callAPI = async () => {
+    console.log('ssss', city.value)
+    city.value = test
+    await refresh()
     console.log('ssss')
-    refresh()
   }
 
 
@@ -55,7 +61,7 @@
 </script>
 
 <template>
-  
+  {{ data }}
   <v-row align="center" justify="center" dense>
     <v-col cols="12" class="my-9">
       <!-- {{ weather }} -->
@@ -63,13 +69,24 @@
       <!-- {{ countries }} -->
 
       <!-- <v-img :src="`https://openweathermap.org/img/wn/${data.weather[0  ].icon}@4x.png`"></v-img> -->
-      <v-text-field
+      <!-- <v-text-field
         v-model="city"
         :append-icon="city ? 'mdi-magnify' : 'mdi-magnify-remove-outline'"
         label="City"
         variant="outlined"
         @click:append="city ? callAPI() : ''"
+      /> -->
+
+      <v-text-field
+        v-model="test"
+        label="City"
+        variant="outlined"
       />
+
+
+
+      <!--  -->
+      <v-btn @click="callAPI"></v-btn>
     </v-col>
 
     <v-col cols="12" md="12">
