@@ -3,112 +3,97 @@
   // const {data, error} = useFetch('')
   // const { weatherRef } = useWeatherService('tehran')
   // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
-  import { Weather } from '@/types/weatherTypes'
+  // import { Weather } from '@/types/weatherTypes'
 
   const city = ref('tehran')
-  const input = reactive({city: 'tehran'})
+  const input = ref('')
+
   // const weather: Ref<Weather>
-    let test: string = ''
-  // const getData = () => {}
   const url = ref(import.meta.env.VITE_BASE_URL_WEATHER)
   const apiKey = ref(import.meta.env.VITE_API_KEY_WEATHER)
-  const {data, error, refresh} = await useFetch(url, {
-    server: false,
+  const {data, refresh} = await useFetch(url, {
     query: {
       // q: input.city,
       q: city,
       APPID: apiKey,
       units: 'metric' 
-    }
-  })
-  let weatherOBJ: Weather = {
-    id: data.value.weather[0].id,
-    city_id: data.value.id,
-    name: data.value.name,
-    country: data.value.sys.country,
-    main: data.value.weather[0].main,
-    description: data.value.weather[0].description,
-    icon: data.value.weather[0].icon,
-    temp: {
-      temp: data.value.main.temp,
-      feels_like: data.value.main.feels_like,
-      temp_min: data.value.main.temp_min,
-      temp_max: data.value.main.temp_max
     },
-    wind: {
-      speed: data.value.wind.speed
-    }
+    server: false,
+  })
+  // let weatherOBJ: Weather = {
+  //   id: data.value.weather[0].id,
+  //   city_id: data.value.id,
+  //   name: data.value.name,
+  //   country: data.value.sys.country,
+  //   main: data.value.weather[0].main,
+  //   description: data.value.weather[0].description,
+  //   icon: data.value.weather[0].icon,
+  //   temp: {
+  //     temp: data.value.main.temp,
+  //     feels_like: data.value.main.feels_like,
+  //     temp_min: data.value.main.temp_min,
+  //     temp_max: data.value.main.temp_max
+  //   },
+  //   wind: {
+  //     speed: data.value.wind.speed
+  //   }
+  // }
+  // const weather = ref(weatherOBJ)
+
+  const callAPI = async () => {
+    const text = input.value
+    city.value = text
+    input.value = ""
   }
-
-  const weather = ref(weatherOBJ)
-
-  onMounted(() => {
-    console.log('myheader mounted');
-    city.value = 'karaj'
-  });
-
-  
-  const  callAPI = async () => {
-    console.log('ssss', city.value)
-    city.value = test
-    await refresh()
-    console.log('ssss')
-  }
-
-
-
-
 </script>
 
 <template>
-  {{ data }}
+  <!-- {{ data }} -->
+  <!-- search section -->
   <v-row align="center" justify="center" dense>
-    <v-col cols="12" class="my-9">
-      <!-- {{ weather }} -->
-
-      <!-- {{ countries }} -->
-
-      <!-- <v-img :src="`https://openweathermap.org/img/wn/${data.weather[0  ].icon}@4x.png`"></v-img> -->
-      <!-- <v-text-field
-        v-model="city"
-        :append-icon="city ? 'mdi-magnify' : 'mdi-magnify-remove-outline'"
-        label="City"
-        variant="outlined"
-        @click:append="city ? callAPI() : ''"
-      /> -->
-
-      <v-text-field
-        v-model="test"
-        label="City"
-        variant="outlined"
-      />
-
-
-
-      <!--  -->
-      <v-btn @click="callAPI"></v-btn>
+    <v-col cols="12" class="mt-9">
+      <v-card
+        variant="text"
+        class="mx-auto py-2"
+        max-width="500"
+      >
+        <v-text-field
+          v-model="input"
+          :append-inner-icon="input ? 'mdi-magnify' : ''"
+          label="City"
+          variant="outlined"
+          @click:append-inner="input ? callAPI() : ''"
+          @keyup.enter="input ? callAPI() : ''"
+        />
+      </v-card>
     </v-col>
-
-    <v-col cols="12" md="12">
+  </v-row>
+  <!-- weather card -->
+  <v-row align="center" justify="center" dense>
+    <v-col cols="12">
       <v-card
         variant="flat"
-        class="mx-auto my-9"
+        class="mx-auto"
         max-width="500"
         color="#9EA4C380"
       >
         <v-card-title>
           <span class="text-h5 font-weight-bold text-high-emphasis me-2">
-            {{ weather.name }}
+            <!-- {{ weather.name }} --> {{ data.name }}
           </span>
-          <span class="text-subtitle-1 font-weight-medium text-medium-emphasis">({{ weather.country }})</span>
+          <span class="text-subtitle-1 font-weight-medium text-medium-emphasis">
+            <!-- ({{ weather.country }}) -->
+            ({{ data.sys.country }})
+          </span>
         </v-card-title>
 
         <v-card-text>
           <v-row class="ma-0 pa-0" align="center" justify="start" dense>
             <!-- icon -->
             <v-col class="ma-0 pa-0" cols="auto">
+              <!-- :src="`https://openweathermap.org/img/wn/${weather.icon}@4x.png`" -->
               <v-img 
-                :src="`https://openweathermap.org/img/wn/${weather.icon}@4x.png`"
+                :src="`https://openweathermap.org/img/wn/${data.weather[0].icon}@4x.png`"
                 max-height="90"
                 max-width="90"
               />
@@ -116,23 +101,27 @@
             <!-- temp -->
             <v-col class="ma-0 pa-0" cols="auto">
               <span class="text-h4 font-weight-regular text-high-emphasis">
-                {{ parseInt(weather.temp.temp.toString()) }}°C
+                <!-- {{ parseInt(weather.temp.temp.toString()) }}°C -->
+                {{ parseInt(data.main.temp.toString()) }}°C
               </span>
             </v-col>
           </v-row>
           
           <v-row class="mx-4 pa-0 mb-2" align="center" justify="start" dense>
             <!-- feels_like main description -->
-            <v-col v-if="weather.temp.temp_max - weather.temp.temp_min > 1" class="ma-0 pa-0" cols="12">
+            <!-- <v-col v-if="weather.temp.temp_max - weather.temp.temp_min > 1" class="ma-0 pa-0" cols="12"> -->
+            <v-col v-if="data.main.temp_max - data.main.temp_min > 1" class="ma-0 pa-0" cols="12">
               <span class="text-caption font-weight-medium text-high-emphasis">
-                The high will be {{ weather.temp.temp_max }}°C, the low will be {{ weather.temp.temp_min }}°C.
+                <!-- The high will be {{ weather.temp.temp_max }}°C, the low will be {{ weather.temp.temp_min }}°C. -->
+                The high will be {{ data.main.temp_max }}°C, the low will be {{ data.main.temp_min }}°C.
               </span>
             </v-col>
 
             <!-- feels_like main description -->
             <v-col class="ma-0 pa-0" cols="12">
               <span class="text-body-1 font-weight-medium text-high-emphasis">
-                Feels like {{ parseInt(weather.temp.feels_like.toString()) }}°C. {{ weather.main }}, {{ weather.description }}
+                <!-- Feels like {{ parseInt(weather.temp.feels_like.toString()) }}°C. {{ weather.main }}, {{ weather.description }} -->
+                Feels like {{ parseInt(data.main.feels_like.toString()) }}°C. {{ data.weather[0].main }}, {{ data.weather[0].description }}
               </span>
             </v-col>
           </v-row>
@@ -174,7 +163,5 @@
     
       </v-card>
     </v-col>
-  </v-row>  
-
-  
+  </v-row>
 </template>
