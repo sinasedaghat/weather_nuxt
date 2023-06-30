@@ -1,14 +1,10 @@
 <script setup lang="ts">
-// definePageMeta({
-//   title: 'My home page'
-// })
 
-//   const data:Promise<{ data: Ref<unknown>; }> = useWeatherService('tehran')
-const { data } = useWeatherServiceNew('tehran')
+const  weatherData = useWeatherService('Tehran')
+// console.log('3: weatherData', weatherData)
 
 </script>
 
 <template>
-    {{ data.data }}
-  <!-- favorite cities ... -->
+{{ weatherData }}
 </template>
