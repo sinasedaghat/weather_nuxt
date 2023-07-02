@@ -4,16 +4,17 @@
   // const { weatherRef } = useWeatherService('tehran')
   // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
   // import { Weather } from '@/types/weatherTypes'
-
+  
+  const appConfig = useAppConfig()
   const city = ref('tehran')
   const input = ref('')
 
+
   // const weather: Ref<Weather>
-  const url = ref(import.meta.env.VITE_BASE_URL_WEATHER)
-  const apiKey = ref(import.meta.env.VITE_API_KEY_WEATHER)
+  const url = appConfig.weatherURL
+  const apiKey = appConfig.weatherAppKey
   const {data, refresh} = await useFetch(url, {
     query: {
-      // q: input.city,
       q: city,
       APPID: apiKey,
       units: 'metric' 
@@ -45,6 +46,7 @@
     city.value = text
     input.value = ""
   }
+
 </script>
 
 <template>
