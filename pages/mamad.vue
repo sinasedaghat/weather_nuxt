@@ -15,30 +15,38 @@
     // pick: ['name'],
     transform: (response) => {
       console.log(response)
-      return {reza : 'reza'}
+      // return {reza : 'reza'}
+
+      let weatherOBJ: Weather = {
+        id: response.weather[0].id,
+        city_id: response.id == 112931 ? 0 : 1, //test
+        name: response.name,
+        country: response.sys.country,
+        main: response.weather[0].main,
+        description: response.weather[0].description,
+        icon: response.weather[0].icon,
+        temp: {
+          temp: response.main.temp,
+          feels_like: response.main.feels_like,
+          temp_min: response.main.temp_min,
+          temp_max: response.main.temp_max
+        },
+        wind: {
+          speed: response.wind.speed
+        }
+      }
+
+
+      return weatherOBJ
+
+
+
+
+
+
     }
   })
-// transform: (reponse) => {
-//       let weatherOBJ: Weather = {
-//         id: data.value.has data.value.weather[0].id,
-//         city_id: data.value.id,
-//         name: data.value.name,
-//         country: data.value.sys.country,
-//         main: data.value.weather[0].main,
-//         description: data.value.weather[0].description,
-//         icon: data.value.weather[0].icon,
-//         temp: {
-//           temp: data.value.main.temp,
-//           feels_like: data.value.main.feels_like,
-//           temp_min: data.value.main.temp_min,
-//           temp_max: data.value.main.temp_max
-//         },
-//         wind: {
-//           speed: data.value.wind.speed
-//         }
-//       }
-      
-//     }
+
 
   const callAPI = async () => {
     const text = input.value

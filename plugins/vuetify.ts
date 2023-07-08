@@ -2,6 +2,7 @@
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+// import  appConfig  from '../app.config'
 
 // const appConfig = useAppConfig()
 // console.log('appConfig', appConfig)
@@ -10,21 +11,28 @@ import * as directives from 'vuetify/directives'
 //   colors: appConfig.lightTheme
 // }
 
-const lightTheme = {
-  dark: false,
-  colors: {
-    background: "#BBD0DE",
-    surface: "#8AA5BD",
-    primary: "#507394",
-    secondary: "#9EA4C3",
-    error: "#FF6A2A",
-    info: "#2F74C8",
-    success: "#9FC131",
-    warning: "#FCD037",
-  }
-}
+// const lightTheme = {
+//   dark: false,
+//   colors: {
+//     background: "#BBD0DE",
+//     surface: "#8AA5BD",
+//     primary: "#507394",
+//     secondary: "#9EA4C3",
+//     error: "#FF6A2A",
+//     info: "#2F74C8",
+//     success: "#9FC131",
+//     warning: "#FCD037",
+//   }
+// }
 
 export default defineNuxtPlugin(nuxtApp => {
+  const appConfig = useAppConfig()
+  console.log('appConfig', appConfig)
+  const lightTheme = {
+    dark: false,
+    colors: appConfig.lightTheme
+  }
+  
   const vuetify = createVuetify({
     ssr: false,
     components,
@@ -57,7 +65,7 @@ export default defineNuxtPlugin(nuxtApp => {
       },
     },
 
-   
+
     // $vuetify.breakpoint.mobile
   })
 
