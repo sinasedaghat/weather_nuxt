@@ -10,4 +10,7 @@
 <template>
   {{ testStore.testValue }}
   <h3 @click="changeVal">change</h3>
+  <v-chip color="primary">
+    Primary
+  </v-chip>
 </template>
