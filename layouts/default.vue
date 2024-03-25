@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
-import { useRoute } from 'vue-router';
-
   const route = useRoute()
-  const router = useRouter()
 </script>
 
 <template>
@@ -24,7 +20,7 @@ import { useRoute } from 'vue-router';
       <v-btn
         v-if="route.name !== 'favorites'"
         icon
-        @click="router.push({ name: 'favorites' })"
+        @click="navigateTo('/favorites')"
       >
         <v-icon>mdi-heart</v-icon>
         <v-tooltip
@@ -38,7 +34,7 @@ import { useRoute } from 'vue-router';
       <v-btn
         v-if="route.name !== 'index'"
         icon
-        @click="router.push({ name: 'index' })"
+        @click="navigateTo('/')"
       >
         <v-icon>mdi-home</v-icon>
         <v-tooltip
@@ -53,5 +49,5 @@ import { useRoute } from 'vue-router';
     <v-main>
       <slot />
     </v-main>
-</v-layout>
+  </v-layout>
 </template>
