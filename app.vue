@@ -1,5 +1,13 @@
+<script setup lang="ts">
+  const testStore = useTestStore()
+
+  const changeVal = () => {
+    testStore.testFunc()
+  }
+
+</script>
+
 <template>
-  <div>
-    <NuxtWelcome />
-  </div>
+  {{ testStore.testValue }}
+  <h3 @click="changeVal">change</h3>
 </template>
