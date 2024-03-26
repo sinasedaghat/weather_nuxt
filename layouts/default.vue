@@ -15,6 +15,8 @@
         </v-col>
       </v-row>
       <v-spacer />
+      <!-- {{ route.name }} -->
+      <ClientOnly>
       <!-- favorite route -->
       <!-- :disabled="!hasFavorite"  -->
       <v-btn
@@ -44,6 +46,7 @@
           <span class="text-caption" v-text="'Go To Home'" />
         </v-tooltip>
       </v-btn>
+    </ClientOnly>
     </v-app-bar>
     <!-- main -->
     <v-main>
