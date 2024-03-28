@@ -1,18 +1,24 @@
 <script setup lang="ts">
+import type { ExpandedWeather } from '~/types/weather'
 import sky from '@/assets/images/cloud-background.mp4'
 
   const valid: Ref<boolean> = ref(true)
   const city: Ref<string> = ref('')
+  const weather: Ref<ExpandedWeather | null> = ref(null)
+  const getWeather = useWeather()
 
   const required = (v: string) => {
     return !!v || 'Field is required'
   }
-  // const difrent = (v: string) => {
-  //   return !!v && v.toLocaleLowerCase() != weather?.value?.name.toLocaleLowerCase() || t('FIELD_IS_REQUIRED')
-  // }
-    const search = () => {
-      console.log('search city ===> ', city.value)
-    }
+  const difrent = (v: string) => {
+    return !!v && v.toLocaleLowerCase() != weather?.value?.name.toLocaleLowerCase() || 'You have information about this city'
+  }
+
+  const search = async () => {
+    weather.value = await getWeather.expandedWeather(city)
+  }
+
+
 </script>
 
 <template>
@@ -36,14 +42,13 @@ import sky from '@/assets/images/cloud-background.mp4'
           <v-row align="center" justify="center" dense>
             <!-- city text field -->
             <v-col cols="10">
-              <!-- :rules="[required, difrent]" -->
               <v-text-field
                 v-model.trim="city"
                 class="elevation-0"
                 color="primary"
                 variant="solo"
                 placeholder="Enter city name ..."
-                :rules="[required]"
+                :rules="[required, difrent]"
                 hide-details
                 rounded
               />
@@ -64,6 +69,8 @@ import sky from '@/assets/images/cloud-background.mp4'
         </v-form>
       </v-card-text>
     </v-card>
+
+    {{ weather }}
   </v-container>
 </template>
 
