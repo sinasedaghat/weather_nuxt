@@ -1,15 +1,42 @@
-type Temp = {
+type TTemp = {
   temp: number
   feels_like: number
   temp_min: number
   temp_max: number
 }
 
-// type ShrunkenPick = 'id' | 'city_id' | 'name' | 'country' | 'location' | 'main' | 'description' | 'icon' | 'temp'
+// type TShrunkenPick = 'id' | 'city_id' | 'name' | 'country' | 'location' | 'main' | 'description' | 'icon' | 'temp'
 
-type ShrunkenOmit = 'code' | 'city_id' | 'shift_timezone' | 'date' | 'country' | 'wind' | 'visibility' | 'humidity' | 'pressure'
+type TShrunkenOmit = 'code' | 'city_id' | 'shift_timezone' | 'date' | 'country' | 'wind' | 'visibility' | 'humidity' | 'pressure'
 
-export interface ExpandedWeather {
+type TWeather = {
+  id: number;
+  main: string;
+  description: string;
+  icon: string
+}
+
+type TMainWeathe = {
+  temp: number;
+  feels_like: number;
+  temp_min: number;
+  temp_max: number;
+  pressure?: number;
+  humidity?: number
+}
+
+export interface IWeatherResponse {
+  id: number;
+  name: string;
+  sys: { country: string;} & { [key: string]: number };
+  weather: TWeather[];
+  main: TMainWeathe;
+  wind: { speed: number, deg: number },
+  visibility: number
+  timezone: number
+}
+
+export interface IExpandedWeather {
   id: number
   city_id: number
   code?: number
@@ -21,11 +48,11 @@ export interface ExpandedWeather {
   main: string
   description: string
   icon: string
-  temp: Temp & {[k: string]: number}
+  temp: TTemp & {[k: string]: number}
   wind?: string
   visibility?: string
   humidity?: string
   pressure?: string
 }
 
-export type ShrunkenWeather = Omit<ExpandedWeather, ShrunkenOmit>
+export type TShrunkenWeather = Omit<IExpandedWeather, TShrunkenOmit>

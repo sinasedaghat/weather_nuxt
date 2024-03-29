@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { ExpandedWeather } from '~/types/weather'
+import type { IExpandedWeather } from '~/types/weather'
 import sky from '@/assets/images/cloud-background.mp4'
 
   const valid: Ref<boolean> = ref(true)
   const city: Ref<string> = ref('')
-  const weather: Ref<ExpandedWeather | null> = ref(null)
+  const weather: Ref<IExpandedWeather | null> = ref(null)
   const getWeather = useWeather()
 
   const required = (v: string) => {
