@@ -9,13 +9,20 @@ type TShrunkenPick = 'aqi' | 'level' | 'description'
 
 // type TShrunkenOmit = 'id' | 'name' | 'co' | 'no2' | 'pm10' | 'pm25' | 'so2'
 
-export interface IPollutantResponse {
+type TAirQuality = Partial<Record<
+  'co' | 'no2' | 'pm10' | 'pm25' | 'so2', { v?: number }
+>>
+
+export type TSuccessResponse = {
+  idx: number;
+  aqi: number;
+  iaqi: TAirQuality;
+  city: { name: string } & { [key: string]: any }
+}
+
+export interface IPollutanResponse {
   status: 'ok' | 'error';
-  data: string | {
-    idx: number;
-    aqi: number;
-    city: { name: string } & { [key: string]: any }
-  }
+  data: TSuccessResponse | string
 }
 
 export interface IExpandedPollution {

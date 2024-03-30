@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import type { IExpandedWeather } from '~/types/weather'
+import type { IExpandedPollution } from '~/types/pollution'
 import sky from '@/assets/images/cloud-background.mp4'
 
   const valid: Ref<boolean> = ref(true)
   const city: Ref<string> = ref('')
   const weather: Ref<IExpandedWeather | null> = ref(null)
+  const pollution: Ref<IExpandedPollution | null> = ref(null)
   const getWeather = useWeather()
   const getPollution = usePollution()
+  const getImage = useImage()
 
   const required = (v: string) => {
     return !!v || 'Field is required'
@@ -17,7 +20,8 @@ import sky from '@/assets/images/cloud-background.mp4'
 
   const search = async () => {
     weather.value = await getWeather.expanded(city)
-    await getPollution.expanded(city)
+    pollution.value = await getPollution.expanded(city)
+    await getImage.getSRC(city)
   }
 
 
@@ -72,7 +76,12 @@ import sky from '@/assets/images/cloud-background.mp4'
       </v-card-text>
     </v-card>
 
-    {{ weather }}
+    WEATHER ==> 
+    <br>{{ weather }}
+    <hr>
+    POLLUTION ==> 
+    <br>
+    {{ pollution }}
   </v-container>
 </template>
 

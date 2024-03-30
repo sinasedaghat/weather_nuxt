@@ -31,8 +31,8 @@ export interface IWeatherResponse {
   sys: { country: string;} & { [key: string]: number };
   weather: TWeather[];
   main: TMainWeathe;
-  wind: { speed: number, deg: number },
-  visibility: number
+  wind?: { speed: number, deg: number },
+  visibility?: number
   timezone: number
 }
 
