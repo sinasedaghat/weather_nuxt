@@ -5,8 +5,8 @@ export const useWeather = () => {
   const appConfig = useAppConfig()
   const url = appConfig.weatherURL
 
-  const expandedWeather = async (city: Ref<string> | string ) => {
-    const { data } = await useFetch(`${url}weather`, {
+  const expanded = async (city: Ref<string> | string ) => {
+    const { data, error, status } = await useFetch(`${url}weather`, {
       params: {
         q: toValue(city),
         units: 'metric',
@@ -17,11 +17,12 @@ export const useWeather = () => {
         return weatherModels.expandedTransform(resp)
       }
     })
+    console.log('error', error.value?.statusCode)
+    console.log('status', status.value)
     return data.value
   }
 
   return {
-    url,
-    expandedWeather
+    expanded
   }
 }

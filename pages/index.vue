@@ -6,6 +6,7 @@ import sky from '@/assets/images/cloud-background.mp4'
   const city: Ref<string> = ref('')
   const weather: Ref<IExpandedWeather | null> = ref(null)
   const getWeather = useWeather()
+  const getPollution = usePollution()
 
   const required = (v: string) => {
     return !!v || 'Field is required'
@@ -15,7 +16,8 @@ import sky from '@/assets/images/cloud-background.mp4'
   }
 
   const search = async () => {
-    weather.value = await getWeather.expandedWeather(city)
+    weather.value = await getWeather.expanded(city)
+    await getPollution.expanded(city)
   }
 
 
