@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { IExpandedWeather } from '~/types/weather'
 import type { IExpandedPollution } from '~/types/pollution'
-import sky from '@/assets/images/cloud-background.mp4'
+import sky from '~/assets/images/cloud-background.mp4'
 
   const valid: Ref<boolean> = ref(true)
   const city: Ref<string> = ref('')
   const weather: Ref<IExpandedWeather | null> = ref(null)
   const pollution: Ref<IExpandedPollution | null> = ref(null)
+  const image: Ref<string> = ref('')
   const getWeather = useWeather()
   const getPollution = usePollution()
   const getImage = useImage()
@@ -21,10 +22,20 @@ import sky from '@/assets/images/cloud-background.mp4'
   const search = async () => {
     weather.value = await getWeather.expanded(city)
     pollution.value = await getPollution.expanded(city)
-    await getImage.getSRC(city)
+    image.value = await getImage.getSRC(city) ?? ''
   }
 
+  // const creatURL = (name: string, extension?: string, directory?: string): string => {
+  //   return new URL(`~/assets/${directory ?? 'images'}/${name}.${extension ?? 'png'}`).href
+  // }
 
+  // const urlImage = new URL ('src/assets/images/default-cart.png')
+  // const urlImage = computed(() => `~/assets/images/${image.value}.png`)
+
+  // import(`~/assets/images/${image.value}.png`).then(img => {
+  //   image.value = img.default;
+  // });
+  
 </script>
 
 <template>
@@ -82,6 +93,17 @@ import sky from '@/assets/images/cloud-background.mp4'
     POLLUTION ==> 
     <br>
     {{ pollution }}
+    <hr>
+    IMAGE ==> 
+    {{ image }}
+    <hr>
+    <!-- {{ createImageURL('default-cart') }} -->
+    <!-- {{ creatURL('default-cart') }} -->
+    <!-- {{ urlImage }} -->
+    <v-img
+      :src="createImageURL('default-cart')"
+      height="320px"
+    />
   </v-container>
 </template>
 

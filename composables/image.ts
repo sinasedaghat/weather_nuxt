@@ -1,3 +1,5 @@
+import type {IImageResponse } from '~/types/image'
+
 export const useImage = () => {
   const appConfig = useAppConfig()
   const url = appConfig.imageURL
@@ -9,8 +11,15 @@ export const useImage = () => {
         lang: 'ar',
         q: `${toValue(city)} landmark`, // HD
         apikey: import.meta.env.VITE_IMAGE_TOKEN
+      },
+      transform: (response) => {
+        const resp = response as IImageResponse
+        return resp.images_results[Math.floor(Math. random()*5) + 1].original
       }
     })
+    console.log('error ImageModels', error.value?.statusCode)
+    console.log('status ImageModels', status.value)
+    return data.value
   }
 
   return {
