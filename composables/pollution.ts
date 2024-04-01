@@ -15,8 +15,8 @@ export const usePollution = () => {
         return typeof resp.data != 'string' ? pollutanModels.expanded(resp.data) : null
       }
     })
-    console.log('error pollutanModels', error.value?.statusCode)
-    console.log('status pollutanModels', status.value)
+    // console.log('error pollutanModels', error.value?.statusCode)
+    // console.log('status pollutanModels', status.value)
     return data.value
   }
 

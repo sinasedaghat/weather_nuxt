@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import vuetify , { transformAssetUrls } from 'vite-plugin-vuetify'
 export default defineNuxtConfig({
+  // ssr: false,
   ssr: true,
   devtools: { enabled: true },
   modules: [

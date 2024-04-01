@@ -17,9 +17,9 @@ export const useWeather = () => {
         return weatherModels.expandedTransform(resp)
       }
     })
-    console.log('error weatherModels', error.value?.statusCode)
-    console.log('status weatherModels', status.value)
-    return data.value
+    // console.log('error weatherModels', error.value?.statusCode)
+    // console.log('status weatherModels', status.value)
+    return { data, status }
   }
 
   return {

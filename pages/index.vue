@@ -7,7 +7,7 @@ import sky from '~/assets/images/cloud-background.mp4'
   const city: Ref<string> = ref('')
   const weather: Ref<IExpandedWeather | null> = ref(null)
   const pollution: Ref<IExpandedPollution | null> = ref(null)
-  const image: Ref<string> = ref('')
+  const image: Ref<string> = ref(createURL('default-cart'))
   const getWeather = useWeather()
   const getPollution = usePollution()
   const getImage = useImage()
@@ -19,23 +19,29 @@ import sky from '~/assets/images/cloud-background.mp4'
     return !!v && v.toLocaleLowerCase() != weather?.value?.name.toLocaleLowerCase() || 'You have information about this city'
   }
 
+  const analysisImageURL = computed(() => {
+    return image.value.search('_nuxt') == -1
+  })
+
   const search = async () => {
-    weather.value = await getWeather.expanded(city)
-    pollution.value = await getPollution.expanded(city)
-    image.value = await getImage.getSRC(city) ?? ''
+    weather.value = null
+    pollution.value = null
+    image.value = createURL('magnifier', 'gif')
+    const {data, status} = await getWeather.expanded(city)
+    weather.value = toValue(data)
+    if (toValue(status) == 'success') {
+      pollution.value = await getPollution.expanded(city)
+      image.value = await getImage.getSRC(city) ?? createURL('city')
+    }
+    else if (toValue(status) == 'error') image.value = createURL('error')
+    // weather.value = await (await getWeather.expanded(city)).data.value
+    // pollution.value = await getPollution.expanded(city)
+    // image.value = await getImage.getSRC(city) ?? ''
+
+    // weather.value = toValue(data)
+    // console.log(toValue(status) == 'success')
+    
   }
-
-  // const creatURL = (name: string, extension?: string, directory?: string): string => {
-  //   return new URL(`~/assets/${directory ?? 'images'}/${name}.${extension ?? 'png'}`).href
-  // }
-
-  // const urlImage = new URL ('src/assets/images/default-cart.png')
-  // const urlImage = computed(() => `~/assets/images/${image.value}.png`)
-
-  // import(`~/assets/images/${image.value}.png`).then(img => {
-  //   image.value = img.default;
-  // });
-  
 </script>
 
 <template>
@@ -87,6 +93,159 @@ import sky from '~/assets/images/cloud-background.mp4'
       </v-card-text>
     </v-card>
 
+    <!-- result data -->
+    <v-card
+      rounded="xl"
+      class="mx-auto"
+      max-width="600"
+    >
+      <!-- header data -->
+      <v-img
+        :src="image"
+        height="320px"
+        :gradient="analysisImageURL || image.search('city') != -1? 'to bottom, rgba(0,0,0,0), rgba(0,0,0,1)' : ''"
+        :class="`align-end ${weather ? 'text-white' : ''}`"
+        :cover="analysisImageURL"
+      >
+        <!-- title -->
+        <v-card-title v-if="weather">
+          <v-row align="start" justify="start" dense>
+            <!-- city location -->
+            <v-col class="ma-0 pa-0" cols="12">
+              <span class="text-h4" v-text="weather?.location" />
+            </v-col>
+            <!-- weather description -->
+            <v-col class="ma-0 pa-0" cols="12">
+              <v-tooltip 
+                text="Weather"
+                location="bottom"
+              >
+                <template v-slot:activator="{ props }">
+                  <v-icon v-bind="props" size="x-small" color="#FFF" start>mdi-weather-cloudy</v-icon>
+                </template>
+              </v-tooltip>
+              <span 
+                class="text-subtitle-1" 
+                v-html="`${weather?.main} &quot;${weather?.description}&quot;`" 
+              />
+            </v-col>
+            <!-- pollution level -->
+            <v-col v-if="pollution" class="ma-0 pa-0" cols="12">
+              <v-tooltip 
+                text="Air Quality"
+                location="bottom"
+              >
+                <template v-slot:activator="{ props }">
+                  <v-icon v-bind="props" size="x-small" color="#FFF" start>mdi-smoke</v-icon>
+                </template>
+              </v-tooltip>
+              <span 
+                class="text-subtitle-1" 
+                v-html="`${pollution?.level ?? ''}`" 
+              />
+            </v-col>
+          </v-row>
+        </v-card-title>
+      </v-img>
+
+      <!-- details -->
+      <v-card-text v-if="weather">
+        <!-- main details -->
+        <v-row class="ma-0 pa-0" align="start" justify="start" dense>
+          <!-- weather -->
+          <v-col class="ma-0 pa-0" cols="12" md="6">
+            <!-- icon & description -->
+            <v-tooltip 
+              location="end"
+              width="250"
+            >
+              <template v-slot:activator="{ props }">
+                <v-avatar v-bind="props" size="60" class="mt-n3 me-n2">
+                  <v-img :src="weather?.icon" alt="Cloud Logo" />
+                </v-avatar>
+              </template>
+              <div>
+                <span class="text-subtitle-2 font-weight-bold d-block">Weather</span>
+                <span class="text-caption font-weight-bold d-block ms-2">{{ weather?.main }} - {{ weather?.description }}</span>
+                <span class="text-caption d-block ms-2">
+                  The air temperature will be {{ weather?.temp?.feels_like }}°C feels like, the maximum will be {{ weather?.temp?.temp_max }}°C and the minimum will be {{ weather?.temp?.temp_min }}°C.
+                </span>
+              </div>
+            </v-tooltip>
+            <!-- temp -->
+            <span class="text-h4">
+              {{ weather?.temp?.temp }}°C
+            </span>
+          </v-col>
+          <!-- pollution -->
+          <v-col v-if="pollution" class="ma-0 pa-0" cols="12" md="5">
+            <!-- icon & description -->
+            <v-tooltip 
+              location="end"
+              width="250"
+            >
+              <template v-slot:activator="{ props }">
+                <v-icon v-bind="props" class="mt-n4 me-2" size="35" :color="pollution?.description.color">
+                  {{ pollution?.description.icon }}
+                </v-icon>
+              </template>
+              <div>
+                <span class="text-subtitle-2 font-weight-bold d-block">Air Quality</span>
+                <span class="text-caption font-weight-bold d-block ms-2">{{ pollution?.level ?? '' }}</span>
+                <span class="text-caption d-block ms-2">
+                  {{ pollution?.description?.desc || '' }}
+                </span>
+              </div>
+            </v-tooltip>
+            <!-- AQI -->
+            <span class="text-h4">
+              {{ pollution?.aqi }}
+            </span>
+          </v-col>
+          <v-spacer></v-spacer>
+          <!-- fav button -->
+          <v-col class="ma-0 pa-0" cols="12" md="auto">
+            <!-- icon & description -->
+            <v-tooltip 
+              location="end"
+              width="250"
+            >
+            <template v-slot:activator="{ props }">
+              <v-icon 
+                v-bind="props" 
+                class="mb-n4" 
+                size="25" 
+                >
+                <!-- :color="favoritesStore.isFavorite(weather?.name.toLowerCase()) ? 'error' : 'gray'"
+                @click="favAction" -->
+                <!-- {{ favoritesStore.isFavorite(weather?.name.toLowerCase()) ? 'mdi-heart' : 'mdi-heart-outline' }} -->mdi-heart-outline
+                </v-icon>
+              </template>
+              <!-- <span class="text-caption">{{
+                favoritesStore.isFavorite(weather?.name.toLowerCase()) ? 'Removal from the list of favorite cities' : 'Add to list of favorite cities'
+              }}</span> -->
+            </v-tooltip>
+          </v-col>
+        </v-row>
+        <v-divider />
+        <!-- chips details -->
+        <v-row class="ma-0 pa-0" align="start" justify="start" dense>
+          
+        </v-row>
+            
+            
+
+
+
+
+
+
+
+        
+        
+      </v-card-text>
+    </v-card>
+
     WEATHER ==> 
     <br>{{ weather }}
     <hr>
@@ -97,13 +256,12 @@ import sky from '~/assets/images/cloud-background.mp4'
     IMAGE ==> 
     {{ image }}
     <hr>
-    <!-- {{ createImageURL('default-cart') }} -->
-    <!-- {{ creatURL('default-cart') }} -->
-    <!-- {{ urlImage }} -->
-    <v-img
-      :src="createImageURL('default-cart')"
-      height="320px"
-    />
+    <!-- <client-only> -->
+      <v-img
+        :src="image"
+        height="320px"
+      />
+    <!-- </client-only> -->
   </v-container>
 </template>
 
