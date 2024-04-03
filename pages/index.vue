@@ -13,6 +13,7 @@ import sky from '~/assets/images/cloud-background.mp4'
   const getWeather = useWeather()
   const getPollution = usePollution()
   const getImage = useImage()
+  const useFavs = useFavsLocalStorage()
 
   const required = (v: string) => {
     return !!v || 'Field is required'
