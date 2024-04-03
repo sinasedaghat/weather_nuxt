@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { IExpandedWeather } from '~/types/weather'
 import type { IExpandedPollution } from '~/types/pollution'
+import { chips as weatherChip } from '~/data/chips_weather'
+import { chips as pollutionChip } from '~/data/chips_pollution'
 import sky from '~/assets/images/cloud-background.mp4'
 
   const valid: Ref<boolean> = ref(true)
@@ -34,13 +36,6 @@ import sky from '~/assets/images/cloud-background.mp4'
       image.value = await getImage.getSRC(city) ?? createURL('city')
     }
     else if (toValue(status) == 'error') image.value = createURL('error')
-    // weather.value = await (await getWeather.expanded(city)).data.value
-    // pollution.value = await getPollution.expanded(city)
-    // image.value = await getImage.getSRC(city) ?? ''
-
-    // weather.value = toValue(data)
-    // console.log(toValue(status) == 'success')
-    
   }
 </script>
 
@@ -230,38 +225,40 @@ import sky from '~/assets/images/cloud-background.mp4'
         <v-divider />
         <!-- chips details -->
         <v-row class="ma-0 pa-0" align="start" justify="start" dense>
-          
+          <!-- weather -->
+          <v-col v-if="weather" class="ma-0 pa-0" cols="12">
+            <v-chip
+              v-for="tag in Object.values(weatherChip).filter(tag => weather && Boolean(weather[tag.value as 'wind' | 'pressure' | 'humidity' | 'visibility']))"
+              :key="tag.id"
+              class="me-2 mt-2"
+              density="comfortable"
+              :color="tag.color"
+            >
+              <small>
+                <span class="font-weight-bold me-1">{{ tag.label }}:</span>
+                <span class="font-weight-medium">{{ weather[tag.value as 'wind' | 'pressure' | 'humidity' | 'visibility'] }}</span>
+              </small>
+            </v-chip>
+          </v-col>
+          <v-divider v-if="pollution" class="mt-2 mx-16" />
+          <!-- pollution -->
+          <v-col v-if="pollution" class="ma-0 pa-0" cols="12">
+            <v-chip
+              v-for="tag in Object.values(pollutionChip).filter(tag => pollution && Boolean(pollution[tag.value as 'co' | 'no2' | 'pm10' | 'pm25' | 'so2']?.value))"
+              :key="tag.id"
+              class="me-2 mt-2"
+              density="comfortable"
+              :color="pollution[tag.value as 'co' | 'no2' | 'pm10' | 'pm25' | 'so2']?.color"
+              >
+              <small>
+                <span class="font-weight-bold me-1">{{ tag.label }}:</span>
+                <span class="font-weight-medium">{{ pollution[tag.value as 'co' | 'no2' | 'pm10' | 'pm25' | 'so2']?.value }}µg/m³</span>
+              </small>
+            </v-chip>
+          </v-col>
         </v-row>
-            
-            
-
-
-
-
-
-
-
-        
-        
       </v-card-text>
     </v-card>
-
-    WEATHER ==> 
-    <br>{{ weather }}
-    <hr>
-    POLLUTION ==> 
-    <br>
-    {{ pollution }}
-    <hr>
-    IMAGE ==> 
-    {{ image }}
-    <hr>
-    <!-- <client-only> -->
-      <v-img
-        :src="image"
-        height="320px"
-      />
-    <!-- </client-only> -->
   </v-container>
 </template>
 
