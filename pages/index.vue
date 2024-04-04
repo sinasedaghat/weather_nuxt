@@ -13,13 +13,17 @@ import sky from '~/assets/images/cloud-background.mp4'
   const getWeather = useWeather()
   const getPollution = usePollution()
   const getImage = useImage()
-  const useFavs = useFavsLocalStorage()
+  // const useFavorites = useStashFavorites()
+  // const { favorites, favList } = useStashFavorites()
+  // const { updateCities } = useStoreFavorites()
 
   const required = (v: string) => {
     return !!v || 'Field is required'
   }
   const difrent = (v: string) => {
-    return !!v && v.toLocaleLowerCase() != weather?.value?.name.toLocaleLowerCase() || 'You have information about this city'
+    console.log(v)
+    console.log('dddddd', weather.value)
+    return !!v && v.toLowerCase().trim() !== weather?.value?.name.toLowerCase().trim() || 'You have information about this city'
   }
 
   const analysisImageURL = computed(() => {
@@ -27,8 +31,8 @@ import sky from '~/assets/images/cloud-background.mp4'
   })
 
   const search = async () => {
-    weather.value = null
-    pollution.value = null
+    // weather.value = null
+    // pollution.value = null
     image.value = createURL('magnifier', 'gif')
     const {data, status} = await getWeather.expanded(city)
     weather.value = toValue(data)
@@ -37,6 +41,12 @@ import sky from '~/assets/images/cloud-background.mp4'
       image.value = await getImage.getSRC(city) ?? createURL('city')
     }
     else if (toValue(status) == 'error') image.value = createURL('error')
+  }
+
+  const favAction = () => {
+    // console.log('favAction')
+    // if(weather?.value?.name) useFavorites.updateFavorites(weather?.value?.name.toLocaleLowerCase())
+    // if(weather?.value?.name) updateCities(weather.value.name)
   }
 </script>
 
@@ -47,7 +57,6 @@ import sky from '~/assets/images/cloud-background.mp4'
       <source :src="sky" type="video/webm" />
       <source :src="sky" type="video/mp4" />
     </video>
-
     <!-- input card -->
     <v-card
       class="mx-auto mt-16" 
@@ -88,7 +97,6 @@ import sky from '~/assets/images/cloud-background.mp4'
         </v-form>
       </v-card-text>
     </v-card>
-
     <!-- result data -->
     <v-card
       rounded="xl"
@@ -198,7 +206,7 @@ import sky from '~/assets/images/cloud-background.mp4'
               {{ pollution?.aqi }}
             </span>
           </v-col>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <!-- fav button -->
           <v-col class="ma-0 pa-0" cols="12" md="auto">
             <!-- icon & description -->
@@ -211,11 +219,12 @@ import sky from '~/assets/images/cloud-background.mp4'
                 v-bind="props" 
                 class="mb-n4" 
                 size="25" 
-                >
+                @click="favAction"
+              >
                 <!-- :color="favoritesStore.isFavorite(weather?.name.toLowerCase()) ? 'error' : 'gray'"
                 @click="favAction" -->
                 <!-- {{ favoritesStore.isFavorite(weather?.name.toLowerCase()) ? 'mdi-heart' : 'mdi-heart-outline' }} -->mdi-heart-outline
-                </v-icon>
+              </v-icon>
               </template>
               <!-- <span class="text-caption">{{
                 favoritesStore.isFavorite(weather?.name.toLowerCase()) ? 'Removal from the list of favorite cities' : 'Add to list of favorite cities'
@@ -224,7 +233,7 @@ import sky from '~/assets/images/cloud-background.mp4'
           </v-col>
         </v-row>
         <v-divider />
-        <!-- chips details -->
+          <!-- chips details -->
         <v-row class="ma-0 pa-0" align="start" justify="start" dense>
           <!-- weather -->
           <v-col v-if="weather" class="ma-0 pa-0" cols="12">
@@ -260,6 +269,25 @@ import sky from '~/assets/images/cloud-background.mp4'
         </v-row>
       </v-card-text>
     </v-card>
+
+
+
+
+      cities from store ====>
+      <br>
+      <!-- {{ cities }} -->
+      <hr>
+      citiesData from store ====>
+      <br>
+      <!-- {{ citiesData }} -->
+      <hr>
+      favorite cities ====>
+      <br>
+      <!-- {{ favList?.[0] }}
+      <hr>
+      {{ typeof favorites }}
+      {{ favorites }} -->
+
   </v-container>
 </template>
 
