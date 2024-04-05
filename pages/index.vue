@@ -14,15 +14,16 @@ import sky from '~/assets/images/cloud-background.mp4'
   const getPollution = usePollution()
   const getImage = useImage()
   // const useFavorites = useStashFavorites()
-  // const { favorites, favList } = useStashFavorites()
-  // const { updateCities } = useStoreFavorites()
+  // const { favList } = useStashFavorites()
+  const { 
+    citiesList, citiesDataList, isFavorite, 
+    updateCities 
+  } = useStoreFavorites()
 
   const required = (v: string) => {
     return !!v || 'Field is required'
   }
   const difrent = (v: string) => {
-    console.log(v)
-    console.log('dddddd', weather.value)
     return !!v && v.toLowerCase().trim() !== weather?.value?.name.toLowerCase().trim() || 'You have information about this city'
   }
 
@@ -31,8 +32,8 @@ import sky from '~/assets/images/cloud-background.mp4'
   })
 
   const search = async () => {
-    // weather.value = null
-    // pollution.value = null
+    weather.value = null
+    pollution.value = null
     image.value = createURL('magnifier', 'gif')
     const {data, status} = await getWeather.expanded(city)
     weather.value = toValue(data)
@@ -41,12 +42,13 @@ import sky from '~/assets/images/cloud-background.mp4'
       image.value = await getImage.getSRC(city) ?? createURL('city')
     }
     else if (toValue(status) == 'error') image.value = createURL('error')
+    city.value = ''
   }
 
   const favAction = () => {
     // console.log('favAction')
     // if(weather?.value?.name) useFavorites.updateFavorites(weather?.value?.name.toLocaleLowerCase())
-    // if(weather?.value?.name) updateCities(weather.value.name)
+    if(weather?.value?.name) updateCities(weather.value.name)
   }
 </script>
 
@@ -210,26 +212,29 @@ import sky from '~/assets/images/cloud-background.mp4'
           <!-- fav button -->
           <v-col class="ma-0 pa-0" cols="12" md="auto">
             <!-- icon & description -->
-            <v-tooltip 
-              location="end"
-              width="250"
-            >
-            <template v-slot:activator="{ props }">
-              <v-icon 
-                v-bind="props" 
-                class="mb-n4" 
-                size="25" 
-                @click="favAction"
+            <ClientOnly>
+              <v-tooltip 
+              v-if="weather"
+                location="end"
+                width="250"
               >
-                <!-- :color="favoritesStore.isFavorite(weather?.name.toLowerCase()) ? 'error' : 'gray'"
-                @click="favAction" -->
-                <!-- {{ favoritesStore.isFavorite(weather?.name.toLowerCase()) ? 'mdi-heart' : 'mdi-heart-outline' }} -->mdi-heart-outline
-              </v-icon>
-              </template>
-              <!-- <span class="text-caption">{{
-                favoritesStore.isFavorite(weather?.name.toLowerCase()) ? 'Removal from the list of favorite cities' : 'Add to list of favorite cities'
-              }}</span> -->
-            </v-tooltip>
+              <template v-slot:activator="{ props }">
+                <v-icon 
+                  v-bind="props" 
+                  class="mb-n4" 
+                  size="25" 
+                  :color="isFavorite(weather?.name.toLowerCase()) ? 'error' : 'gray'"
+                  @click="favAction"
+                >
+                  {{ isFavorite(weather?.name.toLowerCase()) ? 'mdi-heart' : 'mdi-heart-outline' }}
+                </v-icon>
+                </template>
+                <span class="text-caption">{{
+                  isFavorite(weather?.name.toLowerCase()) ? 'Removal from the list of favorite cities' : 'Add to list of favorite cities'
+                }}</span>
+              </v-tooltip>
+            </ClientOnly>
+            <v-icon :color="citiesList.includes(weather?.name.toLowerCase() ?? '') ? 'error' : 'green'">mdi-heart</v-icon>
           </v-col>
         </v-row>
         <v-divider />
@@ -271,22 +276,15 @@ import sky from '~/assets/images/cloud-background.mp4'
     </v-card>
 
 
+    <p>citiesList ==></p>
+    {{ citiesList }}
+    <p>citiesDataList ==></p>
+    {{ citiesDataList }}
+    <p>isFavorite(weather?.name.toLowerCase()) ==></p>
+    {{ isFavorite(weather?.name.toLowerCase() ?? '') }}
+    
 
-
-      cities from store ====>
-      <br>
-      <!-- {{ cities }} -->
-      <hr>
-      citiesData from store ====>
-      <br>
-      <!-- {{ citiesData }} -->
-      <hr>
-      favorite cities ====>
-      <br>
-      <!-- {{ favList?.[0] }}
-      <hr>
-      {{ typeof favorites }}
-      {{ favorites }} -->
+     
 
   </v-container>
 </template>

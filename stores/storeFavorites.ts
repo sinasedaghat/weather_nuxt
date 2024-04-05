@@ -3,63 +3,56 @@ import type { TShrunkenWeather } from '~/types/weather'
 import type { TShrunkenPollution } from '~/types/pollution'
 
 export const useStoreFavorites = defineStore('storeFavorites', () => {
+  // importation
   const { favList, updateFavorites } = useStashFavorites()
-  // const cities: Ref<string[]> = ref([])
-  const cities: Ref<string[]> = ref(favList)
-  // const citiesData: Ref<TFavorites | null> = ref(null)
-  const citiesData: Ref<TFavorites | null> = ref(
-    cities.value.reduce((obj, key) => {
-      return { ...obj, [key]: {} }
-    }, {})
+
+  //declaration
+  const cities: Ref<string[]> = ref([]) // 'tehran', 'karaj'
+  const citiesData: Ref<TFavorites | null> = ref(null)
+  
+  // initialize
+  cities.value = favList.value
+  citiesData.value = favList.value.reduce((obj, key) => {
+    return { ...obj, [key]: {} }
+  }, {})
+  
+  // computies
+  const citiesList = computed(() => cities)
+  const citiesDataList = computed(() => citiesData)
+  // const isFavorite = (city: Ref<string> | string): ComputedRef<boolean> => {
+  const isFavorite = (city: string): ComputedRef<boolean> => {
+    // console.log(cities.value)
+    console.log(cities.value.includes(city))
+    return computed(() => cities.value.includes(city))
+  }
+
+  // watchers
+  watch(
+    cities,
+    () => {
+      console.log('from watch', cities)
+    }, 
+    {
+      once: true
+    }
   )
 
-  
-  // const citiesData: Ref<TFavorites | null> = ref(null)
-
-  // watch(
-  //   favList,
-  //   () => {
-  //     console.log('sssss')
-  //     cities.value = favList.value
-  //     citiesData.value = favList.value.reduce((obj, key) => {
-  //       return {
-  //         ...obj,
-  //         [key] : {}
-  //       }
-  //     }, {})
-  //   },
-  //   {
-  //     once: true
-  //   }
-  // )
-
-  // const updateBulkCities = (bulkCities: string[]) => {
-  //   cities.value = [ ...bulkCities ]
-  // }
-
-  const updateCities = (city: Ref<string> | string) => {
-    console.log('before cities', cities.value.toString())
-    updateFavorites(city)
-   
-    if(cities.value.includes(toValue(city).toLowerCase().trim())) {
-      console.log('in IF')
-      cities.value = cities.value.filter(item => item !== toValue(city))
-      // delete citiesData.value?.[toValue(city).toLowerCase().trim()]
-      console.log('in IF cities', cities.value.toString())
+  // methods
+  const updateCities = (city: string) => {
+    if(cities.value.includes(city.toLowerCase().trim())) {
+      cities.value = cities.value.filter(item => item.toLowerCase().trim() != city.toLowerCase().trim())
+      delete citiesData.value?.[toValue(city).toLowerCase().trim()]
     }
     else {
-      console.log('in ELSE')
-      cities.value.push(toValue(city))
+      cities.value.push(city.toLowerCase().trim())
       citiesData.value = { ...citiesData.value, [toValue(city).toLowerCase().trim()]: {} }
-      console.log('in ELSE citiesData', JSON.stringify(citiesData.value))
     }
-    console.log('after cities', cities.value.toString())
-    // updateFavorites(city)
+    updateFavorites(cities.value.toString())
+    // console.log('citiesList', citiesList.value.toString())
   }
 
   return{
-    // cities, citiesData,
-    // updateBulkCities
+    citiesList, citiesDataList, isFavorite,
     updateCities,
   }
 })
