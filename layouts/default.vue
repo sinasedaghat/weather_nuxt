@@ -1,5 +1,7 @@
 <script setup lang="ts">
   const route = useRoute()
+  const favStore = useStoreFavorites()
+  const { hasFavorite } = storeToRefs(favStore)
 </script>
 
 <template>
@@ -18,9 +20,9 @@
       <!-- {{ route.name }} -->
       <ClientOnly>
       <!-- favorite route -->
-      <!-- :disabled="!hasFavorite"  -->
       <v-btn
         v-if="route.name !== 'favorites'"
+        :disabled="!hasFavorite" 
         icon
         @click="navigateTo('/favorites')"
       >

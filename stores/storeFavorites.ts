@@ -18,41 +18,83 @@ export const useStoreFavorites = defineStore('storeFavorites', () => {
   
   // computies
   const citiesList = computed(() => cities)
-  const citiesDataList = computed(() => citiesData)
-  // const isFavorite = (city: Ref<string> | string): ComputedRef<boolean> => {
-  const isFavorite = (city: string): ComputedRef<boolean> => {
-    // console.log(cities.value)
-    console.log(cities.value.includes(city))
-    return computed(() => cities.value.includes(city))
+  const citiesDataList = computed(() => citiesData.value)
+  const hasFavorite = computed(() => !!cities.value.length)
+  const isFavorite = (city: Ref<string> | string): ComputedRef<boolean> => {
+  // const isFavorite = (city: string): ComputedRef<boolean> => {
+    return computed(() => cities.value.includes(toValue(city)))
   }
 
   // watchers
   watch(
-    cities,
+    hasFavorite,
     () => {
-      console.log('from watch', cities)
+      console.log('from watch hasFavorite', hasFavorite.value)
     }, 
     {
-      once: true
+      // once: true
     }
   )
 
   // methods
+  const _addCities = (city:string) => {
+    cities.value.push(city.toLowerCase().trim())
+    citiesData.value = { ...citiesData.value, [toValue(city).toLowerCase().trim()]: {} }
+  }
+
+  const _removeCities = (city:string) => {
+    cities.value = cities.value.filter(item => item.toLowerCase().trim() != city.toLowerCase().trim())
+    delete citiesData.value?.[toValue(city).toLowerCase().trim()]
+  }
+
   const updateCities = (city: string) => {
-    if(cities.value.includes(city.toLowerCase().trim())) {
-      cities.value = cities.value.filter(item => item.toLowerCase().trim() != city.toLowerCase().trim())
-      delete citiesData.value?.[toValue(city).toLowerCase().trim()]
-    }
-    else {
-      cities.value.push(city.toLowerCase().trim())
-      citiesData.value = { ...citiesData.value, [toValue(city).toLowerCase().trim()]: {} }
-    }
+    if(cities.value.includes(city.toLowerCase().trim())) _removeCities(city)
+    else _addCities(city)
     updateFavorites(cities.value.toString())
-    // console.log('citiesList', citiesList.value.toString())
+  }
+
+  const updateCityWeather = (city: Ref<string> | string, weather: Ref<TShrunkenWeather> | TShrunkenWeather) => {
+    citiesData.value = {
+      ...citiesData.value,
+      [toValue(city).toLowerCase().trim()]: {
+        ...citiesData.value?.[toValue(city).toLowerCase().trim()],
+        weather: toValue(weather),
+        date: new Date()
+      }
+    }
+  }
+  const updateCityPollution = (city: Ref<string> | string, pollution: Ref<TShrunkenPollution> | TShrunkenPollution) => {
+    citiesData.value = {
+      ...citiesData.value,
+      [toValue(city).toLowerCase().trim()]: {
+        ...citiesData.value?.[toValue(city).toLowerCase().trim()],
+        pollution: toValue(pollution),
+        date: new Date()
+      }
+    }
+  }
+  const updateCityImage = (city: Ref<string> | string, image: Ref<string> | string) => {
+    citiesData.value = {
+      ...citiesData.value,
+      [toValue(city).toLowerCase().trim()]: {
+        ...citiesData.value?.[toValue(city).toLowerCase().trim()],
+        image: toValue(image),
+        date: new Date()
+      }
+    }
+  }
+  const updateCityProperties = (city:  Ref<string> | string, data: Ref<TFavData> | TFavData) => {
+    citiesData.value = {
+      ...citiesData.value,
+      [toValue(city).toLowerCase().trim()]: {
+        ...citiesData.value?.[toValue(city).toLowerCase().trim()],
+        ...data
+      }
+    }
   }
 
   return{
-    citiesList, citiesDataList, isFavorite,
+    citiesList, citiesDataList, hasFavorite, isFavorite,
     updateCities,
   }
 })

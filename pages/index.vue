@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { IExpandedWeather } from '~/types/weather'
 import type { IExpandedPollution } from '~/types/pollution'
+import type { TFavData } from '~/types/favorites'
 import { chips as weatherChip } from '~/data/chips_weather'
 import { chips as pollutionChip } from '~/data/chips_pollution'
 import sky from '~/assets/images/cloud-background.mp4'
@@ -16,7 +17,7 @@ import sky from '~/assets/images/cloud-background.mp4'
   // const useFavorites = useStashFavorites()
   // const { favList } = useStashFavorites()
   const { 
-    citiesList, citiesDataList, isFavorite, 
+    isFavorite,
     updateCities 
   } = useStoreFavorites()
 
@@ -49,6 +50,14 @@ import sky from '~/assets/images/cloud-background.mp4'
     // console.log('favAction')
     // if(weather?.value?.name) useFavorites.updateFavorites(weather?.value?.name.toLocaleLowerCase())
     if(weather?.value?.name) updateCities(weather.value.name)
+
+    // const data: TFavData = {
+    //   image: image.value,
+    //   date: new Date()
+    // }
+    // if(weather.value?.name) data.weather = new weatherModel().shrunkenAdapter(weather.value)
+    // if(pollution.value?.name) data.pollution = new pollutionModel().shrunkenAdapter(pollution.value)
+    // favoritesStore.updateCityProperties(weather.value?.name as string, data)
   }
 </script>
 
@@ -212,7 +221,6 @@ import sky from '~/assets/images/cloud-background.mp4'
           <!-- fav button -->
           <v-col class="ma-0 pa-0" cols="12" md="auto">
             <!-- icon & description -->
-            <ClientOnly>
               <v-tooltip 
               v-if="weather"
                 location="end"
@@ -223,18 +231,16 @@ import sky from '~/assets/images/cloud-background.mp4'
                   v-bind="props" 
                   class="mb-n4" 
                   size="25" 
-                  :color="isFavorite(weather?.name.toLowerCase()) ? 'error' : 'gray'"
+                  :color="isFavorite(weather?.name.toLowerCase()).value ? 'error' : 'gray'"
                   @click="favAction"
                 >
-                  {{ isFavorite(weather?.name.toLowerCase()) ? 'mdi-heart' : 'mdi-heart-outline' }}
+                  {{ isFavorite(weather?.name.toLowerCase()).value ? 'mdi-heart' : 'mdi-heart-outline' }}
                 </v-icon>
                 </template>
                 <span class="text-caption">{{
-                  isFavorite(weather?.name.toLowerCase()) ? 'Removal from the list of favorite cities' : 'Add to list of favorite cities'
+                  isFavorite(weather?.name.toLowerCase()).value ? 'Removal from the list of favorite cities' : 'Add to list of favorite cities'
                 }}</span>
               </v-tooltip>
-            </ClientOnly>
-            <v-icon :color="citiesList.includes(weather?.name.toLowerCase() ?? '') ? 'error' : 'green'">mdi-heart</v-icon>
           </v-col>
         </v-row>
         <v-divider />
@@ -275,16 +281,6 @@ import sky from '~/assets/images/cloud-background.mp4'
       </v-card-text>
     </v-card>
 
-
-    <p>citiesList ==></p>
-    {{ citiesList }}
-    <p>citiesDataList ==></p>
-    {{ citiesDataList }}
-    <p>isFavorite(weather?.name.toLowerCase()) ==></p>
-    {{ isFavorite(weather?.name.toLowerCase() ?? '') }}
-    
-
-     
 
   </v-container>
 </template>
