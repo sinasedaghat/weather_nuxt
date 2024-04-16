@@ -4,6 +4,8 @@ import type { IExpandedPollution } from '~/types/pollution'
 import type { TFavData } from '~/types/favorites'
 import { chips as weatherChip } from '~/data/chips_weather'
 import { chips as pollutionChip } from '~/data/chips_pollution'
+import weatherModels from '~/models/weather'
+import pollutanModels from '~/models/pollution'
 import sky from '~/assets/images/cloud-background.mp4'
 
   const valid: Ref<boolean> = ref(true)
@@ -18,7 +20,8 @@ import sky from '~/assets/images/cloud-background.mp4'
   // const { favList } = useStashFavorites()
   const { 
     isFavorite,
-    updateCities 
+    updateCities,
+    // updateCityProperties
   } = useStoreFavorites()
 
   const required = (v: string) => {
@@ -46,18 +49,15 @@ import sky from '~/assets/images/cloud-background.mp4'
     city.value = ''
   }
 
-  const favAction = () => {
-    // console.log('favAction')
-    // if(weather?.value?.name) useFavorites.updateFavorites(weather?.value?.name.toLocaleLowerCase())
-    if(weather?.value?.name) updateCities(weather.value.name)
+  const favAction = async () => {
+    const data: TFavData = await {
+      image: image.value,
+      date: new Date()
+    }
+    if(weather.value?.name) data.weather = await weatherModels.shrunkenAdapter(weather.value)
+    if(pollution.value?.name) data.pollution = await pollutanModels.shrunkenAdapter(pollution.value)
 
-    // const data: TFavData = {
-    //   image: image.value,
-    //   date: new Date()
-    // }
-    // if(weather.value?.name) data.weather = new weatherModel().shrunkenAdapter(weather.value)
-    // if(pollution.value?.name) data.pollution = new pollutionModel().shrunkenAdapter(pollution.value)
-    // favoritesStore.updateCityProperties(weather.value?.name as string, data)
+    if(weather?.value?.name) updateCities(weather.value.name, data)
   }
 </script>
 
@@ -156,7 +156,7 @@ import sky from '~/assets/images/cloud-background.mp4'
               </v-tooltip>
               <span 
                 class="text-subtitle-1" 
-                v-html="`${pollution?.level ?? ''}`" 
+                v-html="`${pollution?.description?.label ?? ''}`" 
               />
             </v-col>
           </v-row>
@@ -206,7 +206,7 @@ import sky from '~/assets/images/cloud-background.mp4'
               </template>
               <div>
                 <span class="text-subtitle-2 font-weight-bold d-block">Air Quality</span>
-                <span class="text-caption font-weight-bold d-block ms-2">{{ pollution?.level ?? '' }}</span>
+                <span class="text-caption font-weight-bold d-block ms-2">{{ pollution?.description?.label ?? '' }}</span>
                 <span class="text-caption d-block ms-2">
                   {{ pollution?.description?.desc || '' }}
                 </span>

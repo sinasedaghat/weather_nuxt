@@ -2,6 +2,22 @@
   const favStore = useStoreFavorites()
   const { hasFavorite, citiesDataList } = storeToRefs(favStore)
   // console.log(citiesDataList)
+
+  // const timeMilliseconds: Ref<number> = ref(new Date().getTime())
+  // const intervalId: Ref<number | null> = ref(null)
+  
+  //   onMounted(() => {
+  //   intervalId.value = setInterval(() => {
+  //     timeMilliseconds.value += 1000
+  //   }, 1000);
+  // });
+
+  // onBeforeUnmount(() => {
+  //   if (intervalId.value) {
+  //     clearInterval(intervalId.value)
+  //     timeMilliseconds.value = 0
+  //   }
+  // });
 </script>
 
 <template>
@@ -23,13 +39,14 @@
         <FavoriteCard
           :city="(city as string)"
           :data="data"
-        />
-        <!-- :data="data"
+          />
+        <!--
         :time="timeMilliseconds"
         @updateData="(data) => favoritesStore.updateCityProperties(city as string ,data as FavData)"
-        @upgradeFavorites="upgradeFavorites" -->
+        @upgradeFavorites="upgradeFavorites"
+        -->
       </v-col>
-      <v-btn @click="favStore.updateCities('tehran')">ssss</v-btn>
+      <!-- <v-btn @click="favStore.updateCities('tehran')">ssss</v-btn> -->
     </v-row>
   </v-card>
 </template>

@@ -67,8 +67,8 @@ class WeatherModels {
   }
 
   public shrunkenAdapter(data: IExpandedWeather | IWeatherResponse): TShrunkenWeather {
-    if(!!data?.name) return this._shrunkenResponse(data as IWeatherResponse)
-    else return this._shrunkenData(data as IExpandedWeather)
+    if(data.hasOwnProperty('location')) return this._shrunkenData(data as IExpandedWeather)
+    else return this._shrunkenResponse(data as IWeatherResponse)
   }
 }
 

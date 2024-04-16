@@ -58,7 +58,7 @@ class PollutionModels {
   }
 
   public shrunkenAdapter(data: IExpandedPollution | TSuccessResponse): TShrunkenPollution {
-    if(!!data?.name) return this._shrunkenData(data as IExpandedPollution)
+    if(data.hasOwnProperty('name')) return this._shrunkenData(data as IExpandedPollution)
     else return this._shrunkenResponse(data as TSuccessResponse)
   }
 }

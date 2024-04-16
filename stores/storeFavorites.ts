@@ -37,9 +37,10 @@ export const useStoreFavorites = defineStore('storeFavorites', () => {
   )
 
   // methods
-  const _addCities = (city:string) => {
+  // const _addCities = (city:string) => {
+  const _addCities = (city:string, data: TFavData) => {
     cities.value.push(city.toLowerCase().trim())
-    citiesData.value = { ...citiesData.value, [toValue(city).toLowerCase().trim()]: {} }
+    citiesData.value = { ...citiesData.value, [toValue(city).toLowerCase().trim()]: { ...data } }
   }
 
   const _removeCities = (city:string) => {
@@ -47,9 +48,12 @@ export const useStoreFavorites = defineStore('storeFavorites', () => {
     delete citiesData.value?.[toValue(city).toLowerCase().trim()]
   }
 
-  const updateCities = (city: string) => {
+  const updateCities = (city: string, data: TFavData = {}) => {
     if(cities.value.includes(city.toLowerCase().trim())) _removeCities(city)
-    else _addCities(city)
+    else {
+      _addCities(city, data)
+      // if(data) _updateCityProperties(city, data)
+    }
     updateFavorites(cities.value.toString())
   }
 
@@ -83,11 +87,11 @@ export const useStoreFavorites = defineStore('storeFavorites', () => {
       }
     }
   }
-  const updateCityProperties = (city:  Ref<string> | string, data: Ref<TFavData> | TFavData) => {
+  const _updateCityProperties = (city: string, data: TFavData) => {
     citiesData.value = {
       ...citiesData.value,
-      [toValue(city).toLowerCase().trim()]: {
-        ...citiesData.value?.[toValue(city).toLowerCase().trim()],
+      [city.toLowerCase().trim()]: {
+        ...citiesData.value?.[city.toLowerCase().trim()],
         ...data
       }
     }
