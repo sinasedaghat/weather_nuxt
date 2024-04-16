@@ -5,7 +5,7 @@ export const useWeather = () => {
   const appConfig = useAppConfig()
   const url = appConfig.weatherURL
 
-  const expanded = async (city: Ref<string> | string ) => {
+  const expanded = async (city: Ref<string> | string) => {
     const { data, error, status } = await useFetch(`${url}weather`, {
       params: {
         q: toValue(city),
@@ -17,12 +17,29 @@ export const useWeather = () => {
         return weatherModels.expandedTransform(resp)
       }
     })
-    // console.log('error weatherModels', error.value?.statusCode)
-    // console.log('status weatherModels', status.value)
+
+    return { data, status }
+  }
+
+  const shrunken = async (city: Ref<string> | string ) => {
+    console.log('shrunken called', toValue(city))
+    const { data, error, status } = await useFetch(`${url}weather`, {
+      params: {
+        q: toValue(city),
+        units: 'metric',
+        APPID: import.meta.env.VITE_WEATHER_TOKEN
+      },
+      transform: (response) => {
+        const resp = response as IWeatherResponse
+        return weatherModels.shrunkenTransformAdapter(resp)
+      }
+    })
+    console.log('data from shrunken', data)
     return { data, status }
   }
 
   return {
-    expanded
+    expanded,
+    shrunken
   }
 }

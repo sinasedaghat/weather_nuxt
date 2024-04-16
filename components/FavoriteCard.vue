@@ -6,6 +6,24 @@ import type { TFavData } from '~/types/favorites'
     data: TFavData
   }
   const props = defineProps<Iprops>()
+
+  const getWeather = useWeather()
+  const getPollution = usePollution()
+  const getImage = useImage()
+  const x: any = ref(null)
+
+  // onRenderTriggered(async() => {
+    // console.log('from on mounted in FavoriteCard component', !!!props.data.date)
+    if(!!!props.data.date) {
+      const {data, status} = await getWeather.shrunken(props.city)
+      // weather.value = toValue(data)
+      await console.log('data from getWeather.shrunken composable in on mounted',data)
+      x.value = toValue(data)
+
+      // getWeather()
+      // getPollution()
+    }
+  // })
 </script>
 
 <template>
@@ -99,6 +117,7 @@ import type { TFavData } from '~/types/favorites'
           </v-row>
         </v-card-text>
       </div>
+      {{ x }}
     </div>
   </v-card>
 </template>

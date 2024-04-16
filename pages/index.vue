@@ -54,8 +54,8 @@ import sky from '~/assets/images/cloud-background.mp4'
       image: image.value,
       date: new Date()
     }
-    if(weather.value?.name) data.weather = await weatherModels.shrunkenAdapter(weather.value)
-    if(pollution.value?.name) data.pollution = await pollutanModels.shrunkenAdapter(pollution.value)
+    if(weather.value?.name) data.weather = await weatherModels.shrunkenTransformAdapter(weather.value)
+    if(pollution.value?.name) data.pollution = await pollutanModels.shrunkenTransformAdapter(pollution.value)
 
     if(weather?.value?.name) updateCities(weather.value.name, data)
   }
