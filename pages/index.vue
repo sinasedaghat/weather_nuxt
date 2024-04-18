@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import type { IExpandedWeather } from '~/types/weather'
 import type { IExpandedPollution } from '~/types/pollution'
+import type { TFavData } from '~/types/favorites'
 import { chips as weatherChip } from '~/data/chips_weather'
 import { chips as pollutionChip } from '~/data/chips_pollution'
+import weatherModels from '~/models/weather'
+import pollutanModels from '~/models/pollution'
 import sky from '~/assets/images/cloud-background.mp4'
 
+
+  const route = useRoute()
+  const router = useRouter()
   const valid: Ref<boolean> = ref(true)
   const city: Ref<string> = ref('')
   const weather: Ref<IExpandedWeather | null> = ref(null)
@@ -13,16 +19,27 @@ import sky from '~/assets/images/cloud-background.mp4'
   const getWeather = useWeather()
   const getPollution = usePollution()
   const getImage = useImage()
+  const { 
+    isFavorite,
+    updateCities,
+  } = useStoreFavorites()
 
   const required = (v: string) => {
     return !!v || 'Field is required'
   }
   const difrent = (v: string) => {
-    return !!v && v.toLocaleLowerCase() != weather?.value?.name.toLocaleLowerCase() || 'You have information about this city'
+    return !!v && v.toLowerCase().trim() !== weather?.value?.name.toLowerCase().trim() || 'You have information about this city'
   }
-
   const analysisImageURL = computed(() => {
-    return image.value.search('_nuxt') == -1
+    return +image.value.search('_nuxt') == -1
+  })
+
+  onMounted(() => {
+    if(route.query.city && typeof route.query.city == 'string') {
+      city.value = route.query.city.trim().toLowerCase()
+      search()
+      router.replace({ path: '/' })
+    }
   })
 
   const search = async () => {
@@ -36,6 +53,16 @@ import sky from '~/assets/images/cloud-background.mp4'
       image.value = await getImage.getSRC(city) ?? createURL('city')
     }
     else if (toValue(status) == 'error') image.value = createURL('error')
+    city.value = ''
+  }
+  const favAction = async () => {
+    const data: TFavData = await {
+      image: analysisImageURL.value ? image.value : createURL('default-favorite'),
+      date: new Date()
+    }
+    if(weather.value?.name) data.weather = await weatherModels.shrunkenTransformAdapter(weather.value)
+    if(pollution.value?.name) data.pollution = await pollutanModels.shrunkenTransformAdapter(pollution.value)
+    if(weather?.value?.name) updateCities(weather.value.name, data)
   }
 </script>
 
@@ -46,8 +73,6 @@ import sky from '~/assets/images/cloud-background.mp4'
       <source :src="sky" type="video/webm" />
       <source :src="sky" type="video/mp4" />
     </video>
-
-    <!-- input card -->
     <v-card
       class="mx-auto mt-16" 
       variant="flat"
@@ -87,7 +112,6 @@ import sky from '~/assets/images/cloud-background.mp4'
         </v-form>
       </v-card-text>
     </v-card>
-
     <!-- result data -->
     <v-card
       rounded="xl"
@@ -136,7 +160,7 @@ import sky from '~/assets/images/cloud-background.mp4'
               </v-tooltip>
               <span 
                 class="text-subtitle-1" 
-                v-html="`${pollution?.level ?? ''}`" 
+                v-html="`${pollution?.description?.label ?? ''}`" 
               />
             </v-col>
           </v-row>
@@ -186,7 +210,7 @@ import sky from '~/assets/images/cloud-background.mp4'
               </template>
               <div>
                 <span class="text-subtitle-2 font-weight-bold d-block">Air Quality</span>
-                <span class="text-caption font-weight-bold d-block ms-2">{{ pollution?.level ?? '' }}</span>
+                <span class="text-caption font-weight-bold d-block ms-2">{{ pollution?.description?.label ?? '' }}</span>
                 <span class="text-caption d-block ms-2">
                   {{ pollution?.description?.desc || '' }}
                 </span>
@@ -197,33 +221,34 @@ import sky from '~/assets/images/cloud-background.mp4'
               {{ pollution?.aqi }}
             </span>
           </v-col>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <!-- fav button -->
           <v-col class="ma-0 pa-0" cols="12" md="auto">
             <!-- icon & description -->
-            <v-tooltip 
-              location="end"
-              width="250"
-            >
-            <template v-slot:activator="{ props }">
-              <v-icon 
-                v-bind="props" 
-                class="mb-n4" 
-                size="25" 
+              <v-tooltip 
+              v-if="weather"
+                location="end"
+                width="250"
+              >
+              <template v-slot:activator="{ props }">
+                <v-icon 
+                  v-bind="props" 
+                  class="mb-n4" 
+                  size="25" 
+                  :color="isFavorite(weather?.name.toLowerCase()).value ? 'error' : 'gray'"
+                  @click="favAction"
                 >
-                <!-- :color="favoritesStore.isFavorite(weather?.name.toLowerCase()) ? 'error' : 'gray'"
-                @click="favAction" -->
-                <!-- {{ favoritesStore.isFavorite(weather?.name.toLowerCase()) ? 'mdi-heart' : 'mdi-heart-outline' }} -->mdi-heart-outline
+                  {{ isFavorite(weather?.name.toLowerCase()).value ? 'mdi-heart' : 'mdi-heart-outline' }}
                 </v-icon>
-              </template>
-              <!-- <span class="text-caption">{{
-                favoritesStore.isFavorite(weather?.name.toLowerCase()) ? 'Removal from the list of favorite cities' : 'Add to list of favorite cities'
-              }}</span> -->
-            </v-tooltip>
+                </template>
+                <span class="text-caption">{{
+                  isFavorite(weather?.name.toLowerCase()).value ? 'Removal from the list of favorite cities' : 'Add to list of favorite cities'
+                }}</span>
+              </v-tooltip>
           </v-col>
         </v-row>
         <v-divider />
-        <!-- chips details -->
+          <!-- chips details -->
         <v-row class="ma-0 pa-0" align="start" justify="start" dense>
           <!-- weather -->
           <v-col v-if="weather" class="ma-0 pa-0" cols="12">

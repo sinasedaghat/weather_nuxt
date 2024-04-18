@@ -1,4 +1,4 @@
-import type { TSuccessResponse, IExpandedPollution } from '~/types/pollution'
+import type { TSuccessResponse, IExpandedPollution, TShrunkenPollution } from '~/types/pollution'
 import { APL, APLDescription } from '~/data/air_pollution_level'
 
 
@@ -8,7 +8,25 @@ class PollutionModels {
     return APL[level] as keyof typeof APLDescription
   }
 
-  expanded(resp: TSuccessResponse): IExpandedPollution {
+  private _shrunkenResponse(resp: TSuccessResponse): TShrunkenPollution {
+    const shrunkenPollution: TShrunkenPollution = {
+      aqi: resp.aqi || 0,
+      level: this._airPollutionLevel(resp.aqi || 0) ?? 'HAZARDOUS',
+      description: APLDescription[this._airPollutionLevel(resp.aqi || 0) ?? 'HAZARDOUS'],
+    }
+    return shrunkenPollution
+  }
+
+  private _shrunkenData(data: IExpandedPollution): TShrunkenPollution {
+    const shrunkenPollution: TShrunkenPollution = {
+      aqi: data.aqi,
+      level: data.level,
+      description: data.description,
+    }
+    return shrunkenPollution
+  }
+
+  expandedTransform(resp: TSuccessResponse): IExpandedPollution {
     const expandedPollution: IExpandedPollution = {
       id: resp.idx || 0,
       name: resp.city.name || '',
@@ -36,8 +54,12 @@ class PollutionModels {
       value: resp.iaqi?.so2?.v,
       color: APLDescription[this._airPollutionLevel(resp.iaqi?.so2?.v)].color
     }
-    
     return expandedPollution
+  }
+
+  public shrunkenTransformAdapter(data: IExpandedPollution | TSuccessResponse): TShrunkenPollution {
+    if(data.hasOwnProperty('name')) return this._shrunkenData(data as IExpandedPollution)
+    else return this._shrunkenResponse(data as TSuccessResponse)
   }
 }
 
