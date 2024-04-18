@@ -17,7 +17,6 @@
         </v-col>
       </v-row>
       <v-spacer />
-      <!-- {{ route.name }} -->
       <ClientOnly>
       <!-- favorite route -->
       <v-btn

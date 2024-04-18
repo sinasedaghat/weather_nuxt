@@ -12,15 +12,27 @@ export const usePollution = () => {
       },
       transform: (response) => {
         const resp = response as IPollutanResponse
-        return typeof resp.data != 'string' ? pollutanModels.expanded(resp.data) : null
+        return typeof resp.data != 'string' ? pollutanModels.expandedTransform(resp.data) : null
       }
     })
-    // console.log('error pollutanModels', error.value?.statusCode)
-    // console.log('status pollutanModels', status.value)
+    return data.value
+  }
+
+  const shrunken = async (city: Ref<string> | string ) => {
+    const { data, error, status } = await useFetch(`${url}feed/${toValue(city)}/`, {
+      params: {
+        token: import.meta.env.VITE_POLLUTION_TOKEN
+      },
+      transform: (response) => {
+        const resp = response as IPollutanResponse
+        return typeof resp.data != 'string' ? pollutanModels.shrunkenTransformAdapter(resp.data) : null
+      }
+    })
     return data.value
   }
 
   return {
-    expanded
+    expanded,
+    shrunken
   }
 }

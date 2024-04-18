@@ -17,12 +17,10 @@ export const useWeather = () => {
         return weatherModels.expandedTransform(resp)
       }
     })
-
     return { data, status }
   }
 
   const shrunken = async (city: Ref<string> | string ) => {
-    console.log('shrunken called', toValue(city))
     const { data, error, status } = await useFetch(`${url}weather`, {
       params: {
         q: toValue(city),
@@ -34,8 +32,7 @@ export const useWeather = () => {
         return weatherModels.shrunkenTransformAdapter(resp)
       }
     })
-    console.log('data from shrunken', data)
-    return { data, status }
+    return data.value
   }
 
   return {

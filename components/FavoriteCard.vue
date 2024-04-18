@@ -4,26 +4,32 @@ import type { TFavData } from '~/types/favorites'
   interface Iprops {
     city: string
     data: TFavData
+    time: number
   }
   const props = defineProps<Iprops>()
+  const emit = defineEmits<{
+    updateData: [data: Ref<TFavData> | TFavData]
+    upgradeFavorites: [city: string]
+  }>()
 
   const getWeather = useWeather()
   const getPollution = usePollution()
   const getImage = useImage()
-  const x: any = ref(null)
+  const cityData: Ref<TFavData> = ref({})
 
-  // onRenderTriggered(async() => {
-    // console.log('from on mounted in FavoriteCard component', !!!props.data.date)
-    if(!!!props.data.date) {
-      const {data, status} = await getWeather.shrunken(props.city)
-      // weather.value = toValue(data)
-      await console.log('data from getWeather.shrunken composable in on mounted',data)
-      x.value = toValue(data)
+  const canRefetch = computed(() => {
+    return (+props.time - +new Date(props.data?.date as Date).getTime() > 600000)
+  })
+  
+  const getData = async (reetch?: boolean) => {
+    cityData.value.date = await new Date
+    cityData.value.weather = await getWeather.shrunken(props.city) ?? undefined
+    cityData.value.pollution = await getPollution.shrunken(props.city) ?? undefined
+    if(reetch) cityData.value.image = await getImage.getSRC(props.city) ?? createURL('default-favorite')
+    await emit('updateData', cityData.value)
+  }
 
-      // getWeather()
-      // getPollution()
-    }
-  // })
+  if(!!!props.data.date) getData()
 </script>
 
 <template>
@@ -57,7 +63,7 @@ import type { TFavData } from '~/types/favorites'
         <!-- weather & pollution -->
         <v-card-text class="ma-0">
           <!-- weather -->
-          <v-row v-if="data.hasOwnProperty('weather')" class="ma-0 pa-0" align="start" justify="start" dense>
+          <v-row v-if="data.hasOwnProperty('weather') && !!data.weather" class="ma-0 pa-0" align="start" justify="start" dense>
             <v-col class="ma-0 pa-0" cols="12">
               <!-- icon & description -->
               <v-avatar size="48" class="mt-n1 me-n2">
@@ -85,7 +91,7 @@ import type { TFavData } from '~/types/favorites'
             </v-col>
           </v-row>
           <!-- pollution -->
-          <v-row v-if="data.hasOwnProperty('pollution')" class="ma-0 pa-0" align="start" justify="start" dense>
+          <v-row v-if="data.hasOwnProperty('pollution') && !!data.pollution" class="ma-0 pa-0" align="start" justify="start" dense>
             <v-col class="ma-0 pa-0" cols="12">
               <!-- icon & description -->
               <v-tooltip
@@ -117,7 +123,61 @@ import type { TFavData } from '~/types/favorites'
           </v-row>
         </v-card-text>
       </div>
-      {{ x }}
     </div>
+    <!-- actions -->
+    <v-card-actions class="my-0 py-0">
+      <span 
+        v-if="data.date"
+        class="text-caption font-weight-medium" 
+        v-html="`Updated on <span class='font-weight-bold'>${localTime(data.date)}</span>`" 
+      />
+      <v-spacer />
+      <!-- update data -->
+      <v-btn 
+        :disabled="!canRefetch"
+        density="compact" 
+        icon 
+        color="success"
+        @click="getData(true)"
+        >
+        <v-icon size="small">mdi-update</v-icon>
+        <v-tooltip
+          activator="parent"
+          location="start"
+        >
+          <span class="text-caption" v-text="'Update the data'" />
+        </v-tooltip>
+      </v-btn>
+      <!-- extensive data -->
+      <v-btn 
+        density="compact" 
+        icon 
+        color="primary"
+        @click="navigateTo({ path: '/', query: { city: props.city }})"
+        >
+        <v-icon size="small">mdi-open-in-new</v-icon>
+        <v-tooltip
+          activator="parent"
+          location="start"
+        >
+          <span class="text-caption" v-text="'See extensive data'" />
+        </v-tooltip>
+      </v-btn>
+      <!-- remove favorite -->
+      <v-btn
+        density="compact" 
+        icon 
+        color="error"
+        @click="emit('upgradeFavorites', city)"
+      >
+        <v-icon size="small">mdi-heart</v-icon>
+        <v-tooltip
+          activator="parent"
+          location="start"
+        >
+          <span class="text-caption" v-text="'Removal from the list of favorite cities'" />
+        </v-tooltip>
+      </v-btn>
+    </v-card-actions>
   </v-card>
 </template>

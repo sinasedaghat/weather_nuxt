@@ -1,23 +1,23 @@
 <script setup lang="ts">
+import type { TFavData } from '~/types/favorites';
+
   const favStore = useStoreFavorites()
   const { hasFavorite, citiesDataList } = storeToRefs(favStore)
-  // console.log(citiesDataList)
-
-  // const timeMilliseconds: Ref<number> = ref(new Date().getTime())
-  // const intervalId: Ref<number | null> = ref(null)
+  const timeMilliseconds: Ref<number> = ref(new Date().getTime())
+  const intervalId: Ref<number | null> = ref(null)
   
-  //   onMounted(() => {
-  //   intervalId.value = setInterval(() => {
-  //     timeMilliseconds.value += 1000
-  //   }, 1000);
-  // });
+  onMounted(() => {
+    intervalId.value = setInterval(() => {
+      timeMilliseconds.value += 1000
+    }, 1000) as any as number;
+  });
 
-  // onBeforeUnmount(() => {
-  //   if (intervalId.value) {
-  //     clearInterval(intervalId.value)
-  //     timeMilliseconds.value = 0
-  //   }
-  // });
+  onBeforeUnmount(() => {
+    if (intervalId.value) {
+      clearInterval(intervalId.value)
+      timeMilliseconds.value = 0
+    }
+  });
 </script>
 
 <template>
@@ -28,7 +28,6 @@
   >
     <!-- city cards -->
     <v-row v-if="hasFavorite" align="stretch" justify="start" dense>
-      <!-- {{ hasFavorite }} -->
       <v-col 
         v-for="(data, city) in citiesDataList"
         :key="city"
@@ -36,17 +35,16 @@
         cols="12"
         md="6"
       >
-        <FavoriteCard
-          :city="(city as string)"
-          :data="data"
+        <ClientOnly>
+          <FavoriteCard
+            :city="(city as string)"
+            :data="data"
+            :time="timeMilliseconds"
+            @update-data="(data) => favStore.updateCityProperties(city as string ,data as TFavData)"
+            @upgrade-favorites="favStore.updateCities(city as string)"
           />
-        <!--
-        :time="timeMilliseconds"
-        @updateData="(data) => favoritesStore.updateCityProperties(city as string ,data as FavData)"
-        @upgradeFavorites="upgradeFavorites"
-        -->
+        </ClientOnly>
       </v-col>
-      <!-- <v-btn @click="favStore.updateCities('tehran')">ssss</v-btn> -->
     </v-row>
   </v-card>
 </template>

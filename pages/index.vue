@@ -8,6 +8,9 @@ import weatherModels from '~/models/weather'
 import pollutanModels from '~/models/pollution'
 import sky from '~/assets/images/cloud-background.mp4'
 
+
+  const route = useRoute()
+  const router = useRouter()
   const valid: Ref<boolean> = ref(true)
   const city: Ref<string> = ref('')
   const weather: Ref<IExpandedWeather | null> = ref(null)
@@ -16,12 +19,9 @@ import sky from '~/assets/images/cloud-background.mp4'
   const getWeather = useWeather()
   const getPollution = usePollution()
   const getImage = useImage()
-  // const useFavorites = useStashFavorites()
-  // const { favList } = useStashFavorites()
   const { 
     isFavorite,
     updateCities,
-    // updateCityProperties
   } = useStoreFavorites()
 
   const required = (v: string) => {
@@ -30,9 +30,16 @@ import sky from '~/assets/images/cloud-background.mp4'
   const difrent = (v: string) => {
     return !!v && v.toLowerCase().trim() !== weather?.value?.name.toLowerCase().trim() || 'You have information about this city'
   }
-
   const analysisImageURL = computed(() => {
-    return image.value.search('_nuxt') == -1
+    return +image.value.search('_nuxt') == -1
+  })
+
+  onMounted(() => {
+    if(route.query.city && typeof route.query.city == 'string') {
+      city.value = route.query.city.trim().toLowerCase()
+      search()
+      router.replace({ path: '/' })
+    }
   })
 
   const search = async () => {
@@ -48,15 +55,13 @@ import sky from '~/assets/images/cloud-background.mp4'
     else if (toValue(status) == 'error') image.value = createURL('error')
     city.value = ''
   }
-
   const favAction = async () => {
     const data: TFavData = await {
-      image: image.value,
+      image: analysisImageURL.value ? image.value : createURL('default-favorite'),
       date: new Date()
     }
     if(weather.value?.name) data.weather = await weatherModels.shrunkenTransformAdapter(weather.value)
     if(pollution.value?.name) data.pollution = await pollutanModels.shrunkenTransformAdapter(pollution.value)
-
     if(weather?.value?.name) updateCities(weather.value.name, data)
   }
 </script>
@@ -68,7 +73,6 @@ import sky from '~/assets/images/cloud-background.mp4'
       <source :src="sky" type="video/webm" />
       <source :src="sky" type="video/mp4" />
     </video>
-    <!-- input card -->
     <v-card
       class="mx-auto mt-16" 
       variant="flat"
@@ -280,8 +284,6 @@ import sky from '~/assets/images/cloud-background.mp4'
         </v-row>
       </v-card-text>
     </v-card>
-
-
   </v-container>
 </template>
 

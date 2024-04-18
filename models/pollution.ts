@@ -26,7 +26,7 @@ class PollutionModels {
     return shrunkenPollution
   }
 
-  expanded(resp: TSuccessResponse): IExpandedPollution {
+  expandedTransform(resp: TSuccessResponse): IExpandedPollution {
     const expandedPollution: IExpandedPollution = {
       id: resp.idx || 0,
       name: resp.city.name || '',
