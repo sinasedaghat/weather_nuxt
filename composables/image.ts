@@ -17,8 +17,6 @@ export const useImage = () => {
         return resp.images_results[Math.floor(Math. random()*5) + 1].original
       }
     })
-    // console.log('error ImageModels', error.value?.statusCode)
-    // console.log('status ImageModels', status.value)
     return data.value
   }
 
